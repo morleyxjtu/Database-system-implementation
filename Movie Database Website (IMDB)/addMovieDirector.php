@@ -120,6 +120,7 @@ table.table2, th, td {
 		        		}
 		        	}
 		        	echo '<td><input type="radio" name="check_movie" value="'.$row[0].'"> Choose this movie</td>';
+		        	echo $row[0];
 		        	echo "</tr>";
 		        }
 		        echo "</table>";

@@ -99,9 +99,7 @@ class BTLeafNode {
     */
     RC write(PageId pid, PageFile& pf);
 
-    RC setParent(PageId pid);
-
-    PageId getParent();
+    //RC show();
 
   private:
    /**
@@ -182,10 +180,6 @@ class BTNonLeafNode {
     * @return 0 if successful. Return an error code if there is an error.
     */
     RC write(PageId pid, PageFile& pf);
-
-    RC setParent(PageId pid);
-
-    PageId getParent();
 
   private:
    /**

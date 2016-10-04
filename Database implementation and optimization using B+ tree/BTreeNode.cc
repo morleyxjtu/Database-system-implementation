@@ -1,4 +1,5 @@
 #include "BTreeNode.h"
+#include "PageFile.h"
 #include <cstring>
 #include <iostream>
 
@@ -8,7 +9,7 @@ BTLeafNode::BTLeafNode()
 {
 	//initialize the buffer to be -1
 	memset(buffer, -1, PageFile::PAGE_SIZE);
-	max_key=(PageFile::PAGE_SIZE-sizeof(PageId))/(sizeof(int)+sizeof(RecordId))-1;
+	max_key=(PageFile::PAGE_SIZE-sizeof(PageId))/(sizeof(int)+sizeof(RecordId));
 }
 /*
  * Read the content of the node from the page pid in the PageFile pf.
@@ -154,7 +155,7 @@ RC BTLeafNode::insertAndSplit(int key, const RecordId& rid,
 	memset(buffer, -1, PageFile::PAGE_SIZE);
 	memcpy(buffer, overflow_buffer, half*(sizeof(key)+sizeof(rid)));
 	//copy the other half of the overflow_buffer to it. The next node pid is the pid for previous buffer
-	memcpy(sibling.buffer, overflow_buffer+half*(sizeof(key)+sizeof(rid)), (max_key-half+1)*(sizeof(key)+sizeof(rid)));
+	memcpy(sibling.buffer, overflow_buffer+half*(sizeof(key)+sizeof(rid)), half*(sizeof(key)+sizeof(rid)));
 	memcpy(sibling.buffer+PageFile::PAGE_SIZE-sizeof(PageId), &next_pid, sizeof(PageId));
 	
 	memcpy(&siblingKey, sibling.buffer, sizeof(int));
@@ -263,30 +264,14 @@ RC BTLeafNode::setNextNodePtr(PageId pid)
 	memcpy(buffer+PageFile::PAGE_SIZE-sizeof(PageId), &pid, sizeof(PageId));
 	return 0;
 }
-
-RC BTLeafNode::setParent(PageId pid)
+/*
+RC BTLeafNode::show()
 {
-	if (pid <0)
-	{
-		return RC_INVALID_PID;
-	}
-	memcpy(buffer+PageFile::PAGE_SIZE-2*sizeof(PageId), &pid, sizeof(PageId));
-	return 0;
+	int item;
+	memcpy(&item, buffer+12, sizeof(int));
+	return item;
 }
-
-PageId BTLeafNode::getParent()
-{
-	PageId pid;
-	memcpy(&pid, buffer+PageFile::PAGE_SIZE-2*sizeof(PageId), sizeof(PageId));
-	if (pid == -1)
-	{
-		return RC_INVALID_PID;
-	}else
-	{
-		return pid; 
-	}
-}
-
+*/
 BTNonLeafNode::BTNonLeafNode()
 {
 	memset(buffer, -1, PageFile::PAGE_SIZE);
@@ -489,22 +474,4 @@ RC BTNonLeafNode::initializeRoot(PageId pid1, int key, PageId pid2)
 	memcpy(pid1_position+sizeof(PageId)+sizeof(key), &pid2, sizeof(PageId));
 
 	return 0;
-}
-
-RC BTNonLeafNode::setParent(PageId pid)
-{
-	if (pid <0)
-	{
-		return RC_INVALID_PID;
-	}
-	memcpy(buffer+PageFile::PAGE_SIZE-2*sizeof(PageId), &pid, sizeof(PageId));
-	return 0;
-}
-
-PageId BTNonLeafNode::getParent()
-{
-	PageId pid;
-	memcpy(&pid, buffer+PageFile::PAGE_SIZE-2*sizeof(PageId), sizeof(PageId));
-
-		return pid; 
 }

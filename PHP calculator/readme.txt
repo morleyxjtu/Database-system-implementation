@@ -1,0 +1,1 @@
+A simple PHP calclator that can parse regular expressions and calculate the value.

@@ -58,10 +58,6 @@ class BTreeIndex {
    */
   RC insert(int key, const RecordId& rid);
 
-  RC insertRecursion(int key, const RecordId& rid);
-
-  RC insertParent(PageId parentPid, int key, PageId pid);
-
   /**
    * Run the standard B+Tree key search algorithm and identify the
    * leaf node where searchKey may exist. If an index entry with
@@ -82,8 +78,6 @@ class BTreeIndex {
    */
   RC locate(int searchKey, IndexCursor& cursor);
 
-  RC locateRecursion(int searchKey, IndexCursor& cursor);
-
   /**
    * Read the (key, rid) pair at the location specified by the index cursor,
    * and move foward the cursor to the next entry.
@@ -93,7 +87,6 @@ class BTreeIndex {
    * @return error code. 0 if no error
    */
   RC readForward(IndexCursor& cursor, int& key, RecordId& rid);
-
   
  private:
   PageFile pf;         /// the PageFile used to store the actual b+tree in disk
@@ -104,10 +97,6 @@ class BTreeIndex {
   /// this class is destructed. Make sure to store the values of the two 
   /// variables in disk, so that they can be reconstructed when the index
   /// is opened again later.
-  char buffer[PageFile::PAGE_SIZE];
-  int currentHeight;
-  PageId tempRootPid;
-  int lastNonLeaf;
 };
 
 #endif /* BTREEINDEX_H */
